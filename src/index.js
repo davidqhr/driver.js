@@ -83,6 +83,10 @@ export default class Driver {
     this.steps = steps;
   }
 
+  getCurrentStep() {
+    return this.currentStep;
+  }
+
   /**
    * Binds any DOM events listeners
    * @todo: add throttling in all the listeners

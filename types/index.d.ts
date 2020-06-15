@@ -43,7 +43,9 @@ export default class Driver {
   /**
    * Public getter for steps property
    */
-  public getSteps(): Array<Driver.Step>;
+  public getSteps(): Array<Driver.Element>;
+
+  public getCurrentStep(): number;
 
   /**
    * Public setter for steps property
