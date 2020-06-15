@@ -246,7 +246,7 @@ declare module 'driver.js' {
        */
       constructor(
         node: HTMLElement | Node | null,
-        nodeSelectorFunction: () => string | HTMLELEMENT,
+        nodeSelectorFunction: () => string | HTMLElement,
         options: Driver.DriverOptions,
         popover: Driver.Popover,
         stage: Driver.Stage,
