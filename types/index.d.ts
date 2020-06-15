@@ -246,7 +246,7 @@ namespace Driver {
      * @param {Document} document
      */
     constructor(
-      node: HTMLElement | Node | null,
+      node: HTMLElement | null,
       nodeSelectorFunction: () => string | HTMLElement,
       options: Driver.DriverOptions,
       popover: Driver.Popover,
@@ -324,7 +324,9 @@ namespace Driver {
      * Gets the node that this element refers to
      * @return {Node | HTMLElement}
      */
-    public getNode(): Node | HTMLElement;
+    public getNode(): HTMLElement | null;
+
+    public getNodeSelectorFunction(): () => string | HTMLElement;
 
     /**
      * Gets the size of current element

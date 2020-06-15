@@ -314,6 +314,10 @@ export default class Element {
     return this.node;
   }
 
+  getNodeSelectorFunction() {
+    return this.nodeSelectorFunction;
+  }
+
   /**
    * Hides the stage
    * @public
