@@ -22,16 +22,9 @@ export default class Element {
    * @param {Window} window
    * @param {Document} document
    */
-  constructor({
-    node,
-    options,
-    popover,
-    stage,
-    overlay,
-    window,
-    document,
-  } = {}) {
+  constructor({ node, nodeSelectorFunction, options, popover, stage, overlay, window, document } = {}) {
     this.node = node;
+    this.nodeSelectorFunction = nodeSelectorFunction;
     this.document = document;
     this.window = window;
     this.options = options;
@@ -61,10 +54,10 @@ export default class Element {
     }
 
     return (
-      top >= this.window.pageYOffset
-      && left >= this.window.pageXOffset
-      && (top + height) <= (this.window.pageYOffset + this.window.innerHeight)
-      && (left + width) <= (this.window.pageXOffset + this.window.innerWidth)
+      top >= this.window.pageYOffset &&
+      left >= this.window.pageXOffset &&
+      top + height <= this.window.pageYOffset + this.window.innerHeight &&
+      left + width <= this.window.pageXOffset + this.window.innerWidth
     );
   }
 
@@ -75,7 +68,7 @@ export default class Element {
   scrollManually() {
     const elementRect = this.node.getBoundingClientRect();
     const absoluteElementTop = elementRect.top + this.window.pageYOffset;
-    const middle = absoluteElementTop - (this.window.innerHeight / 2);
+    const middle = absoluteElementTop - this.window.innerHeight / 2;
 
     this.window.scrollTo(0, middle);
   }
@@ -97,10 +90,12 @@ export default class Element {
     }
 
     try {
-      this.node.scrollIntoView(this.options.scrollIntoViewOptions || {
-        behavior: 'instant',
-        block: 'center',
-      });
+      this.node.scrollIntoView(
+        this.options.scrollIntoViewOptions || {
+          behavior: 'instant',
+          block: 'center',
+        },
+      );
     } catch (e) {
       // `block` option is not allowed in older versions of firefox, scroll manually
       this.scrollManually();
@@ -263,13 +258,13 @@ export default class Element {
       // - Opacity is below 0
       // - Filter/transform or perspective is applied
       if (
-        /[0-9]+/.test(zIndex)
-        || opacity < 1
-        || (transform && transform !== 'none')
-        || (transformStyle && transformStyle !== 'flat')
-        || (transformBox && transformBox !== 'border-box')
-        || (filter && filter !== 'none')
-        || (perspective && perspective !== 'none')
+        /[0-9]+/.test(zIndex) ||
+        opacity < 1 ||
+        (transform && transform !== 'none') ||
+        (transformStyle && transformStyle !== 'flat') ||
+        (transformBox && transformBox !== 'border-box') ||
+        (filter && filter !== 'none') ||
+        (perspective && perspective !== 'none')
       ) {
         parentNode.classList.add(CLASS_FIX_STACKING_CONTEXT);
       }

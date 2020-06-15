@@ -1,5 +1,5 @@
 import { ANIMATION_DURATION_MS, ID_OVERLAY, OVERLAY_HTML } from '../common/constants';
-import { createNodeFromString } from '../common/utils';
+import { createNodeFromString, isDomElement } from '../common/utils';
 
 /**
  * Responsible for overlay creation and manipulation i.e.
@@ -14,8 +14,8 @@ export default class Overlay {
   constructor(options, window, document) {
     this.options = options;
 
-    this.highlightedElement = null;              // currently highlighted dom element (instance of Element)
-    this.lastHighlightedElement = null;          // element that was highlighted before current one
+    this.highlightedElement = null; // currently highlighted dom element (instance of Element)
+    this.lastHighlightedElement = null; // element that was highlighted before current one
     this.hideTimer = null;
 
     this.window = window;
@@ -57,9 +57,23 @@ export default class Overlay {
    * @public
    */
   highlight(element) {
-    if (!element || !element.node) {
+    if (!element) {
       console.warn('Invalid element to highlight. Must be an instance of `Element`');
       return;
+    }
+
+    if (!element.node && element.nodeSelectorFunction) {
+      const querySelectorOrElement = element.nodeSelectorFunction();
+      const domElement = isDomElement(querySelectorOrElement)
+        ? querySelectorOrElement
+        : this.document.querySelector(querySelectorOrElement);
+
+      if (!domElement) {
+        console.warn(`Element to highlight ${querySelectorOrElement} not found`);
+        return;
+      }
+
+      element.node = domElement;
     }
 
     // If highlighted element is not changed from last time

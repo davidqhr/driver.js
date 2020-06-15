@@ -13,9 +13,9 @@
     "no-bitwise": "off",
     "class-methods-use-this": "off",
     "prefer-destructuring": "off",
-    "no-param-reassign": [
-      "off"
-    ],
+    "object-curly-newline": "off",
+    "operator-linebreak": "off",
+    "no-param-reassign": ["off"],
     "max-len": "off",
     "no-multi-spaces": "off"
   }

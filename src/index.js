@@ -29,28 +29,28 @@ export default class Driver {
   constructor(options = {}) {
     this.options = {
       animate: SHOULD_ANIMATE_OVERLAY, // Whether to animate or not
-      opacity: OVERLAY_OPACITY,    // Overlay opacity
-      padding: OVERLAY_PADDING,    // Spacing around the element from the overlay
+      opacity: OVERLAY_OPACITY, // Overlay opacity
+      padding: OVERLAY_PADDING, // Spacing around the element from the overlay
       scrollIntoViewOptions: null, // Options to be passed to `scrollIntoView`
-      allowClose: SHOULD_OUTSIDE_CLICK_CLOSE,      // Whether to close overlay on click outside the element
-      keyboardControl: ALLOW_KEYBOARD_CONTROL,     // Whether to allow controlling through keyboard or not
+      allowClose: SHOULD_OUTSIDE_CLICK_CLOSE, // Whether to close overlay on click outside the element
+      keyboardControl: ALLOW_KEYBOARD_CONTROL, // Whether to allow controlling through keyboard or not
       overlayClickNext: SHOULD_OUTSIDE_CLICK_NEXT, // Whether to move next on click outside the element
-      stageBackground: '#ffffff',       // Background color for the stage
-      onHighlightStarted: () => null,   // When element is about to be highlighted
-      onHighlighted: () => null,        // When element has been highlighted
-      onDeselected: () => null,         // When the element has been deselected
-      onReset: () => null,              // When overlay is about to be cleared
-      onNext: () => null,               // When next button is clicked
-      onPrevious: () => null,           // When previous button is clicked
+      stageBackground: '#ffffff', // Background color for the stage
+      onHighlightStarted: () => null, // When element is about to be highlighted
+      onHighlighted: () => null, // When element has been highlighted
+      onDeselected: () => null, // When the element has been deselected
+      onReset: () => null, // When overlay is about to be cleared
+      onNext: () => null, // When next button is clicked
+      onPrevious: () => null, // When previous button is clicked
       ...options,
     };
 
     this.document = document;
     this.window = window;
     this.isActivated = false;
-    this.steps = [];                    // steps to be presented if any
-    this.currentStep = 0;               // index for the currently highlighted step
-    this.currentMovePrevented = false;  // If the current move was prevented
+    this.steps = []; // steps to be presented if any
+    this.currentStep = 0; // index for the currently highlighted step
+    this.currentMovePrevented = false; // If the current move was prevented
 
     this.overlay = new Overlay(this.options, window, document);
 
@@ -384,19 +384,24 @@ export default class Driver {
       elementOptions = { ...this.options, ...currentStep };
     }
 
-    // If the given element is a query selector or a DOM element?
-    const domElement = isDomElement(querySelector) ? querySelector : this.document.querySelector(querySelector);
-    if (!domElement) {
-      console.warn(`Element to highlight ${querySelector} not found`);
-      return null;
+    let domElement = null;
+    let nodeSelectorFunction = null;
+
+    if (typeof querySelector === 'function') {
+      nodeSelectorFunction = querySelector;
+    } else {
+      // If the given element is a query selector or a DOM element?
+      domElement = isDomElement(querySelector) ? querySelector : this.document.querySelector(querySelector);
+
+      if (!domElement) {
+        console.warn(`Element to highlight ${querySelector} not found`);
+        return null;
+      }
     }
 
     let popover = null;
     if (elementOptions.popover && elementOptions.popover.title) {
-      const mergedClassNames = [
-        this.options.className,
-        elementOptions.popover.className,
-      ].filter(c => c).join(' ');
+      const mergedClassNames = [this.options.className, elementOptions.popover.className].filter(c => c).join(' ');
 
       const popoverOptions = {
         ...elementOptions,
@@ -416,6 +421,7 @@ export default class Driver {
 
     return new Element({
       node: domElement,
+      nodeSelectorFunction,
       options: elementOptions,
       popover,
       stage,
